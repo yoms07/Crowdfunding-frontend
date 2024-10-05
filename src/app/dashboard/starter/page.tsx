@@ -80,67 +80,13 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md">
-        <div className="p-4">
-          <Link href="/" className="text-2xl font-bold text-primary">
-            CrowdFund
-          </Link>
-        </div>
-        <nav className="mt-8">
-          <Link
-            href="/dashboard"
-            className="flex items-center px-4 py-2 text-gray-700 bg-gray-200"
-          >
-            <LayoutDashboard className="mr-3 h-5 w-5" />
-            Dashboard
-          </Link>
-          <Link
-            href="/projects"
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-          >
-            <BarChart2 className="mr-3 h-5 w-5" />
-            Projects
-          </Link>
-          <Link
-            href="/backers"
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-          >
-            <Users className="mr-3 h-5 w-5" />
-            Backers
-          </Link>
-          <Link
-            href="/finances"
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-          >
-            <DollarSign className="mr-3 h-5 w-5" />
-            Finances
-          </Link>
-          <Link
-            href="/settings"
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-          >
-            <Settings className="mr-3 h-5 w-5" />
-            Settings
-          </Link>
-        </nav>
-        <div className="absolute bottom-0 w-64 p-4">
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => console.log("Logout clicked")}
-          >
-            <LogOut className="mr-3 h-5 w-5" />
-            Logout
-          </Button>
-        </div>
-      </aside>
-
       {/* Main content */}
       <main className="flex-1 overflow-y-auto p-8">
         <div className="flex justify-between">
           <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-          <Button>Create Project</Button>
+          <Link href="/dashboard/starter/create-crowdfunding">
+            <Button>Create Project</Button>
+          </Link>
         </div>
         <Card className="mb-8">
           <CardHeader>

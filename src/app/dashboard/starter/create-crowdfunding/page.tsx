@@ -147,13 +147,8 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <main className="container mx-auto px-4 py-8">
-        <Link href="/dashboard" className="flex items-center text-primary mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Link>
-
         <h1 className="text-3xl font-bold mb-8">Create a New Project</h1>
 
         <form onSubmit={handleSubmit}>
@@ -367,12 +362,6 @@ export default function CreateProject() {
           </div>
         </form>
       </main>
-
-      <footer className="bg-muted mt-16 py-12">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 CrowdFund. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }

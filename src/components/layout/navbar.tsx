@@ -35,7 +35,7 @@ const Navbar = () => {
           <ul className="flex space-x-4 items-center">
             <li>
               <Link
-                href="/explore"
+                href="/projects"
                 className="text-muted-foreground hover:text-primary"
               >
                 Explore
@@ -44,10 +44,20 @@ const Navbar = () => {
             <li>
               {account && (
                 <Link
-                  href="/start-crowdfunding"
+                  href="/dashboard/starter/create-crowdfunding"
                   className="text-muted-foreground hover:text-primary"
                 >
                   Start a Crowdfunding
+                </Link>
+              )}
+            </li>
+            <li>
+              {account && (
+                <Link
+                  href="/dashboard/starter"
+                  className="text-muted-foreground hover:text-primary"
+                >
+                  Open Dashboard
                 </Link>
               )}
             </li>
