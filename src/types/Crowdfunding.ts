@@ -3,12 +3,17 @@ export type CrowdfundingContribution = {
   amount: number;
   timestamp: Date;
 };
-export type Crowdfunding = {
-  address: string;
+
+export type CrowdfundingMetadata = {
   title: string;
+  description: string;
+  categories: string[];
+};
+
+export type Crowdfunding = CrowdfundingMetadata & {
+  address: string;
   current: number;
   target: number;
-  categories: string[];
   deadline: Date;
   isOpen: boolean;
   contributions: CrowdfundingContribution[];

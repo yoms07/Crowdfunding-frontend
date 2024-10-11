@@ -130,7 +130,13 @@ export default function CreateProject() {
     e.preventDefault();
     try {
       const deadline = Math.floor(date.getTime() / 1000);
-      await createCrowdfunding(projectName, [category], fundingGoal, deadline);
+      await createCrowdfunding(
+        projectName,
+        [category],
+        projectDescription,
+        fundingGoal,
+        deadline
+      );
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({

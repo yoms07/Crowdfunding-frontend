@@ -1,13 +1,17 @@
 import { Contract, BrowserProvider } from "ethers";
+import { v4 } from "uuid";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import KBFactoryArtifact from "@/artifacts/contracts/KBFactory.sol/KBFactory.json";
 import KBTokenArtifact from "@/artifacts/contracts/KBToken.sol/KBToken.json";
 import {
   kbFactory as address,
   kbToken as tokenAddress,
 } from "@/config/contract_address.json";
+import { createIPFSClient } from "./ipfs";
 export const createCrowdfunding = async (
   title: string,
   categories: string[],
+  description: string,
   target: number,
   deadline: number
 ) => {
@@ -16,20 +20,28 @@ export const createCrowdfunding = async (
       throw new Error("metamask is not connected");
     }
 
+    const client = createIPFSClient();
+    const cfMetadata = {
+      title,
+      categories,
+      description,
+      random: v4(),
+    };
+    const { cid } = await client.add({
+      content: uint8ArrayFromString(JSON.stringify(cfMetadata)),
+    });
+
     const provider = new BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
 
     const contract = new Contract(address, KBFactoryArtifact.abi, signer);
     const tx = await contract.createCrowdfunding(
-      title,
-      categories,
+      cid.toString(),
       target,
       deadline
     );
 
     await tx.wait();
-
-    console.log(tx);
   } catch (err) {
     console.error(err);
     throw err;

@@ -157,7 +157,7 @@ const ProjectSettingTab = ({
             <Label htmlFor="project-description">Project Description</Label>
             <Textarea
               id="project-description"
-              value={"TODO: DESCRIPTION"}
+              value={crowdfunding.description}
               rows={4}
               disabled={disabled}
             />
@@ -198,7 +198,7 @@ export default function ProjectDetail({
 
   const handleUpdateSave = () => {};
   return (
-    <main className="flex-1 overflow-y-auto p-8">
+    <main className="flex-1 overflow-y-auto p-8 w-full">
       <h1 className="text-3xl font-bold mb-8">Project Management</h1>
 
       {/* Project overview */}

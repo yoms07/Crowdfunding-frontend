@@ -88,7 +88,7 @@ export default function ProjectDetail({
                 <CardTitle>About this project</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>TODO: DESCRIPTION</p>
+                <p>{crowdfunding.description}</p>
               </CardContent>
             </Card>
           </TabsContent>
