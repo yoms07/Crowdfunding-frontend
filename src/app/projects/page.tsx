@@ -1,13 +1,6 @@
-import { Button } from "@/components/ui/button";
+"use client";
+import { useQuery } from "@apollo/client";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -15,66 +8,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
-import { Users, Clock } from "lucide-react";
+import { GET_CROWDFUNDINGS, mapCrowdfunding } from "@/lib/graphql";
+import { Crowdfunding } from "@/types/Crowdfunding";
+import CrowdfundingCard from "./card";
+import { useMemo, useState } from "react";
+
+const useSearch = () => {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<string>("all");
+
+  return {
+    search,
+    setSearch,
+    category,
+    setCategory,
+  };
+};
+
+const useSearchQuery = (category: string, search: string) => {
+  const cachedCategories = useMemo(() => {
+    if (category === "all") {
+      return [];
+    }
+    return [category];
+  }, [category]);
+
+  const { loading, error, data } = useQuery(GET_CROWDFUNDINGS, {
+    variables: {
+      categories: cachedCategories,
+      search,
+    },
+  });
+
+  return {
+    loading,
+    error,
+    data,
+  };
+};
 
 export default function ProjectExplorer() {
-  const projects = [
-    {
-      id: 1,
-      title: "Eco-Friendly Water Bottle",
-      category: "Environment",
-      raised: 15000,
-      goal: 20000,
-      backers: 350,
-      daysLeft: 15,
-    },
-    {
-      id: 2,
-      title: "Revolutionary AI Assistant",
-      category: "Technology",
-      raised: 50000,
-      goal: 100000,
-      backers: 1200,
-      daysLeft: 30,
-    },
-    {
-      id: 3,
-      title: "Indie Film Production",
-      category: "Arts",
-      raised: 30000,
-      goal: 50000,
-      backers: 600,
-      daysLeft: 20,
-    },
-    {
-      id: 4,
-      title: "Sustainable Fashion Line",
-      category: "Fashion",
-      raised: 25000,
-      goal: 40000,
-      backers: 500,
-      daysLeft: 25,
-    },
-    {
-      id: 5,
-      title: "Educational Board Game",
-      category: "Games",
-      raised: 10000,
-      goal: 15000,
-      backers: 200,
-      daysLeft: 10,
-    },
-    {
-      id: 6,
-      title: "Organic Urban Farm",
-      category: "Food",
-      raised: 40000,
-      goal: 60000,
-      backers: 800,
-      daysLeft: 35,
-    },
-  ];
+  const { search, setSearch, category, setCategory } = useSearch();
+  const { loading, error, data } = useSearchQuery(category, search);
+  if (data) {
+    console.log(data.crowdfundings.map(mapCrowdfunding));
+  }
+  let crowdfundings: Crowdfunding[] = [];
+  if (error) {
+    console.log(error);
+    return <h1>Error . . .</h1>;
+  }
+  if (!loading && !error) {
+    crowdfundings = data.crowdfundings.map(mapCrowdfunding);
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -85,23 +71,25 @@ export default function ProjectExplorer() {
             type="search"
             placeholder="Search projects"
             className="w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Select>
+        <Select value={category} onValueChange={(e) => setCategory(e)}>
           <SelectTrigger className="w-full md:w-[180px]">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            <SelectItem value="technology">Technology</SelectItem>
-            <SelectItem value="arts">Arts</SelectItem>
-            <SelectItem value="environment">Environment</SelectItem>
-            <SelectItem value="fashion">Fashion</SelectItem>
-            <SelectItem value="games">Games</SelectItem>
-            <SelectItem value="food">Food</SelectItem>
+            <SelectItem value="Technology">Technology</SelectItem>
+            <SelectItem value="Arts">Arts</SelectItem>
+            <SelectItem value="Environment">Environment</SelectItem>
+            <SelectItem value="Fashion">Fashion</SelectItem>
+            <SelectItem value="Games">Games</SelectItem>
+            <SelectItem value="Food">Food</SelectItem>
           </SelectContent>
         </Select>
-        <Select>
+        {/* <Select>
           <SelectTrigger className="w-full md:w-[180px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
@@ -111,43 +99,15 @@ export default function ProjectExplorer() {
             <SelectItem value="most-funded">Most Funded</SelectItem>
             <SelectItem value="ending-soon">Ending Soon</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {projects.map((project) => (
-          <Card key={project.id}>
-            <CardHeader>
-              <CardTitle>{project.title}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {project.category}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Progress
-                value={(project.raised / project.goal) * 100}
-                className="mb-2"
-              />
-              <p className="text-sm text-muted-foreground mb-4">
-                ${project.raised.toLocaleString()} raised of $
-                {project.goal.toLocaleString()} goal
-              </p>
-              <div className="flex justify-between text-sm">
-                <span className="flex items-center">
-                  <Users className="w-4 h-4 mr-1" />
-                  {project.backers} backers
-                </span>
-                <span className="flex items-center">
-                  <Clock className="w-4 h-4 mr-1" />
-                  {project.daysLeft} days left
-                </span>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Link href={`/project/${project.id}`} className="w-full">
-                <Button className="w-full">View Project</Button>
-              </Link>
-            </CardFooter>
-          </Card>
+        {loading && <h1>Loading . . .</h1>}
+        {crowdfundings.map((crowdfunding) => (
+          <CrowdfundingCard
+            crowdfunding={crowdfunding}
+            key={crowdfunding.address}
+          />
         ))}
       </div>
     </div>

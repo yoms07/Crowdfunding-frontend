@@ -4,6 +4,12 @@ export type CrowdfundingContribution = {
   timestamp: Date;
 };
 
+export type CrowdfundingBurning = {
+  to: string;
+  amount: number;
+  timestamp: Date;
+};
+
 export type CrowdfundingMetadata = {
   title: string;
   description: string;
@@ -16,8 +22,20 @@ export type Crowdfunding = CrowdfundingMetadata & {
   target: number;
   deadline: Date;
   isOpen: boolean;
+  totalRaised: number;
   contributions: CrowdfundingContribution[];
+  burnings: CrowdfundingBurning[];
   starter: {
     address: string;
   };
+  createdAt: Date;
+};
+
+export const countBacker = (c: Crowdfunding): number => {
+  const backerList = new Set();
+  c.contributions.forEach((cont) => {
+    backerList.add(cont.contributor);
+  });
+
+  return backerList.size;
 };
