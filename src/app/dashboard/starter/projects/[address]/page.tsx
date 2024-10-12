@@ -1,17 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-import {
-  LayoutDashboard,
-  DollarSign,
-  Users,
-  BarChart2,
-  Settings,
-  LogOut,
-} from "lucide-react";
 import { findCrowdfunding } from "@/lib/crowdfunding";
 import { useToast } from "@/hooks/use-toast";
 import { Crowdfunding } from "@/types/Crowdfunding";

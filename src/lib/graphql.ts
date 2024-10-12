@@ -47,6 +47,20 @@ export const GET_CROWDFUNDINGS = gql`
   }
 `;
 
+export const GET_MY_CROWDFUNDINGS = gql`
+  query GetMyCrowdfundings($myAddress: String!, $search: String) {
+    crowdfundings(
+      where: {
+        and: [{ title_contains_nocase: $search }, { starter: $myAddress }]
+      }
+    ) {
+      ...CommonCrowdfundingFields
+    }
+  }
+`;
+
+// export const STARTER_DASHBOARD_QUERY = gql``;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mapCrowdfunding = (d: any): Crowdfunding => {
   console.log(d);

@@ -50,12 +50,9 @@ const useSearchQuery = (category: string, search: string) => {
 export default function ProjectExplorer() {
   const { search, setSearch, category, setCategory } = useSearch();
   const { loading, error, data } = useSearchQuery(category, search);
-  if (data) {
-    console.log(data.crowdfundings.map(mapCrowdfunding));
-  }
+
   let crowdfundings: Crowdfunding[] = [];
   if (error) {
-    console.log(error);
     return <h1>Error . . .</h1>;
   }
   if (!loading && !error) {
