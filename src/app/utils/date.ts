@@ -8,6 +8,9 @@ export function daysLeft(targetDate: Date) {
   // Calculate the difference in milliseconds
   const millisecondsDifference =
     targetDateObj.getTime() - currentDate.getTime();
+  if (millisecondsDifference < 0) {
+    return 0;
+  }
 
   // Convert milliseconds to days
   const daysDifference = millisecondsDifference / (1000 * 60 * 60 * 24);

@@ -38,50 +38,41 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { useQuery } from "@apollo/client";
+import { GET_MY_CROWDFUNDINGS, mapCrowdfunding } from "@/lib/graphql";
+import { useSDK } from "@metamask/sdk-react";
+import { Crowdfunding } from "@/types/Crowdfunding";
+
+const countBackers = (crowdfundings: Crowdfunding[]): number => {
+  const backerList = new Set();
+  crowdfundings.forEach((cf) => {
+    cf.contributions.forEach((cont) => [backerList.add(cont.contributor)]);
+  });
+
+  return backerList.size;
+};
 
 export default function Dashboard() {
-  const [activeProject, setActiveProject] = useState(
-    "Eco-Friendly Water Bottle"
-  );
-
-  const projects = [
-    {
-      name: "Eco-Friendly Water Bottle",
-      raised: 7500,
-      goal: 10000,
-      backers: 150,
-      daysLeft: 12,
+  const { account } = useSDK();
+  const { loading, error, data } = useQuery(GET_MY_CROWDFUNDINGS, {
+    variables: {
+      myAddress: account ? account : "0x0000", // default to zero address
+      search: "",
     },
-    {
-      name: "Innovative Learning App",
-      raised: 18000,
-      goal: 25000,
-      backers: 320,
-      daysLeft: 8,
-    },
-    {
-      name: "Community Garden Initiative",
-      raised: 4200,
-      goal: 5000,
-      backers: 85,
-      daysLeft: 5,
-    },
-  ];
-
-  const dailyDonations = [
-    { name: "Mon", amount: 500 },
-    { name: "Tue", amount: 800 },
-    { name: "Wed", amount: 1200 },
-    { name: "Thu", amount: 750 },
-    { name: "Fri", amount: 1500 },
-    { name: "Sat", amount: 2000 },
-    { name: "Sun", amount: 1800 },
-  ];
+  });
+  let crowdfundings: Crowdfunding[] = [];
+  if (error) {
+    console.error(error);
+    return <h1>Error . . .</h1>;
+  }
+  if (!loading && !error) {
+    crowdfundings = data.crowdfundings.map(mapCrowdfunding);
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 w-full md:max-w-7xl">
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-8 w-full">
         <div className="flex justify-between">
           <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
           <Link href="/dashboard/starter/create-crowdfunding">
@@ -96,102 +87,32 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div>
                 <p className="text-sm text-muted-foreground">Project Listed</p>
-                <p className="text-2xl font-bold">10</p>
+                <p className="text-2xl font-bold">{crowdfundings.length}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Project Success</p>
-                <p className="text-2xl font-bold">8</p>
+                <p className="text-2xl font-bold">
+                  {
+                    crowdfundings.filter((c) => c.totalRaised >= c.target)
+                      .length
+                  }
+                </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">OnGoing Project</p>
-                <p className="text-2xl font-bold">1</p>
+                <p className="text-2xl font-bold">
+                  {crowdfundings.filter((c) => c.totalRaised < c.target).length}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Backers</p>
-                <p className="text-2xl font-bold">100</p>
+                <p className="text-2xl font-bold">
+                  {countBackers(crowdfundings)}
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Carousel className="w-full h-50">
-          <CarouselContent className=" h-50 w-1/2">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem key={index} className="h-50 w-full">
-                {/* <div className="p-1"> */}
-                <Card className="mb-8 w-full">
-                  <CardHeader>
-                    <CardTitle>{activeProject}</CardTitle>
-                    <CardDescription>Project Overview</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          Funds Raised
-                        </p>
-                        <p className="text-2xl font-bold">
-                          $
-                          {projects
-                            .find((p) => p.name === activeProject)
-                            ?.raised.toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          Backers
-                        </p>
-                        <p className="text-2xl font-bold">
-                          {
-                            projects.find((p) => p.name === activeProject)
-                              ?.backers
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          Days Left
-                        </p>
-                        <p className="text-2xl font-bold">
-                          {
-                            projects.find((p) => p.name === activeProject)
-                              ?.daysLeft
-                          }
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <Progress
-                        value={
-                          ((projects.find((p) => p.name === activeProject)
-                            ?.raised ?? 0) /
-                            (projects.find((p) => p.name === activeProject)
-                              ?.goal ?? 1)) *
-                          100
-                        }
-                        className="h-2"
-                      />
-                      <p className="text-sm text-muted-foreground mt-2">
-                        $
-                        {projects
-                          .find((p) => p.name === activeProject)
-                          ?.raised.toLocaleString()}{" "}
-                        raised of $
-                        {projects
-                          .find((p) => p.name === activeProject)
-                          ?.goal.toLocaleString()}{" "}
-                        goal
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-                {/* </div> */}
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="translate-x-8" />
-          <CarouselNext className="-translate-x-12" />
-        </Carousel>
 
         {/* Tabs for different metrics */}
         <Tabs defaultValue="donations" className="space-y-4">
@@ -209,7 +130,7 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
+                {/* <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dailyDonations}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -217,7 +138,7 @@ export default function Dashboard() {
                     <Tooltip />
                     <Bar dataKey="amount" fill="#3b82f6" />
                   </BarChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer> */}
               </CardContent>
             </Card>
           </TabsContent>
