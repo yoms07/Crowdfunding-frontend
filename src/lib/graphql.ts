@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Crowdfunding } from "@/types/Crowdfunding";
+import { Crowdfunding, CrowdfundingContribution } from "@/types/Crowdfunding";
 
 export const GET_CROWDFUNDINGS_INPUT = gql`
   type GetCrowdfundingsInput {
@@ -59,6 +59,39 @@ export const GET_MY_CROWDFUNDINGS = gql`
   }
 `;
 
+export const GET_RECENT_TRANSACTIONS = gql`
+  query GetRecentTransaction($myAddress: String!) {
+    crowdfundingContributions(
+      where: { crowdfunding_: { starter: $myAddress } }
+      orderBy: timestamp
+      orderDirection: desc
+    ) {
+      contributor
+      amount
+      timestamp
+    }
+  }
+`;
+
+export const GET_DASHBOARD_DATA = gql`
+  query GetDashboardData($myAddress: String!) {
+    crowdfundingContributions(
+      where: { crowdfunding_: { starter: $myAddress } }
+      orderBy: timestamp
+      orderDirection: desc
+      first: 10
+    ) {
+      contributor
+      amount
+      timestamp
+    }
+
+    crowdfundings(where: { starter: $myAddress }) {
+      ...CommonCrowdfundingFields
+    }
+  }
+`;
+
 // export const STARTER_DASHBOARD_QUERY = gql``;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,16 +112,20 @@ export const mapCrowdfunding = (d: any): Crowdfunding => {
       address: d.starter,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    contributions: d.contributions.map((c: any) => ({
-      contributor: c.contributor,
-      amount: c.amount,
-      timestamp: new Date(c.timestamp * 1000),
-    })),
+    contributions: d.contributions.map(mapContribution),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     burnings: d.burnings.map((c: any) => ({
       to: c.to,
       amount: c.amount,
       timestamp: new Date(c.timestamp * 1000),
     })),
+  };
+};
+
+export const mapContribution = (c: any): CrowdfundingContribution => {
+  return {
+    contributor: c.contributor,
+    amount: c.amount,
+    timestamp: new Date(c.timestamp * 1000),
   };
 };

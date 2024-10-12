@@ -13,35 +13,16 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  LayoutDashboard,
-  DollarSign,
-  Users,
-  BarChart2,
-  Settings,
-  LogOut,
-} from "lucide-react";
 import { useQuery } from "@apollo/client";
-import { GET_MY_CROWDFUNDINGS, mapCrowdfunding } from "@/lib/graphql";
+import {
+  GET_DASHBOARD_DATA,
+  GET_MY_CROWDFUNDINGS,
+  mapContribution,
+  mapCrowdfunding,
+} from "@/lib/graphql";
 import { useSDK } from "@metamask/sdk-react";
-import { Crowdfunding } from "@/types/Crowdfunding";
+import { Crowdfunding, CrowdfundingContribution } from "@/types/Crowdfunding";
+import FinancialReporting from "./finance";
 
 const countBackers = (crowdfundings: Crowdfunding[]): number => {
   const backerList = new Set();
@@ -52,21 +33,32 @@ const countBackers = (crowdfundings: Crowdfunding[]): number => {
   return backerList.size;
 };
 
-export default function Dashboard() {
+const useDashboardData = () => {
   const { account } = useSDK();
-  const { loading, error, data } = useQuery(GET_MY_CROWDFUNDINGS, {
+  const { loading, error, data } = useQuery(GET_DASHBOARD_DATA, {
     variables: {
       myAddress: account ? account : "0x0000", // default to zero address
       search: "",
     },
   });
+};
+
+export default function Dashboard() {
+  const { account } = useSDK();
+  const { loading, error, data } = useQuery(GET_DASHBOARD_DATA, {
+    variables: {
+      myAddress: account ? account : "0x0000", // default to zero address
+    },
+  });
   let crowdfundings: Crowdfunding[] = [];
+  let recentTransactions: CrowdfundingContribution[] = [];
   if (error) {
     console.error(error);
     return <h1>Error . . .</h1>;
   }
   if (!loading && !error) {
     crowdfundings = data.crowdfundings.map(mapCrowdfunding);
+    recentTransactions = data.crowdfundingContributions.map(mapContribution);
   }
 
   return (
@@ -114,8 +106,13 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
+        <FinancialReporting
+          crowdfundings={crowdfundings}
+          recentTransactions={recentTransactions}
+        />
+
         {/* Tabs for different metrics */}
-        <Tabs defaultValue="donations" className="space-y-4">
+        {/* <Tabs defaultValue="donations" className="space-y-4">
           <TabsList>
             <TabsTrigger value="donations">Donations</TabsTrigger>
             <TabsTrigger value="backers">Backers</TabsTrigger>
@@ -130,7 +127,7 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-[300px]">
-                {/* <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dailyDonations}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -138,7 +135,7 @@ export default function Dashboard() {
                     <Tooltip />
                     <Bar dataKey="amount" fill="#3b82f6" />
                   </BarChart>
-                </ResponsiveContainer> */}
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </TabsContent>
@@ -168,7 +165,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </Tabs> */}
       </main>
     </div>
   );

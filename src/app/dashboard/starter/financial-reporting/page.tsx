@@ -109,26 +109,6 @@ export default function FinancialReporting() {
               <p className="text-2xl font-bold">$72.61</p>
             </div>
           </div>
-          <div className="space-x-2">
-            <Button
-              variant={selectedReport === "daily" ? "default" : "outline"}
-              onClick={() => setSelectedReport("daily")}
-            >
-              Daily
-            </Button>
-            <Button
-              variant={selectedReport === "weekly" ? "default" : "outline"}
-              onClick={() => setSelectedReport("weekly")}
-            >
-              Weekly
-            </Button>
-            <Button
-              variant={selectedReport === "monthly" ? "default" : "outline"}
-              onClick={() => setSelectedReport("monthly")}
-            >
-              Monthly
-            </Button>
-          </div>
         </CardContent>
       </Card>
 

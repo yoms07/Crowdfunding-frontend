@@ -28,13 +28,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <BarChart2 className="mr-3 h-5 w-5" />
             Projects
           </Link>
-          <Link
+          {/* <Link
             href="/dashboard/starter/financial-reporting"
             className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
             <DollarSign className="mr-3 h-5 w-5" />
             Finances
-          </Link>
+          </Link> */}
         </nav>
         <h1 className="ml-4 py-2">Backer</h1>
         <nav>
