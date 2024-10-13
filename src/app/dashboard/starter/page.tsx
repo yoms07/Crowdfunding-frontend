@@ -1,22 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useQuery } from "@apollo/client";
 import {
   GET_DASHBOARD_DATA,
-  GET_MY_CROWDFUNDINGS,
   mapContribution,
   mapCrowdfunding,
 } from "@/lib/graphql";

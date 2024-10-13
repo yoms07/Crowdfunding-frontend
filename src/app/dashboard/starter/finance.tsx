@@ -43,10 +43,13 @@ export default function FinancialReporting({
             <div>
               <p className="text-sm text-muted-foreground">Average Pledge</p>
               <p className="text-2xl font-bold">
-                $
-                {(
-                  totalRaised(crowdfundings) / contributionCount(crowdfundings)
-                ).toLocaleString()}
+                ${" "}
+                {contributionCount(crowdfundings) > 0
+                  ? (
+                      totalRaised(crowdfundings) /
+                      contributionCount(crowdfundings)
+                    ).toLocaleString()
+                  : 0}
               </p>
             </div>
           </div>

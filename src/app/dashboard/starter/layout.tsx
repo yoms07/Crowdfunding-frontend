@@ -1,14 +1,11 @@
 "use client";
-import {
-  BarChart2,
-  DollarSign,
-  LayoutDashboard,
-  Settings,
-  Users,
-} from "lucide-react";
+import { BarChart2, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-white shadow-md">
@@ -16,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <nav>
           <Link
             href="/dashboard/starter"
-            className="flex items-center px-4 py-2 text-gray-700 bg-gray-200"
+            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
             <LayoutDashboard className="mr-3 h-5 w-5" />
             Dashboard
@@ -40,7 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <nav>
           <Link
             href="/dashboard/backer"
-            className="flex items-center px-4 py-2 text-gray-700 bg-gray-200"
+            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
             <LayoutDashboard className="mr-3 h-5 w-5" />
             Dashboard
