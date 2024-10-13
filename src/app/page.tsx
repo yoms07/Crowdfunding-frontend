@@ -143,10 +143,12 @@ function HeroSection() {
           to life.
         </p>
         <div className="flex justify-center space-x-4">
-          <Button size="lg">Start a Project</Button>
-          <Button size="lg" variant="secondary">
-            Explore Projects
-          </Button>
+          {/* <Button size="lg">Start a Project</Button> */}
+          <Link href="/projects">
+            <Button size="lg" variant="secondary">
+              Explore Projects
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

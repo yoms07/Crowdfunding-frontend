@@ -92,6 +92,32 @@ export const GET_DASHBOARD_DATA = gql`
   }
 `;
 
+export const GET_MY_CONTRIBUTIONS = gql`
+  query GetMyContributions($myAddress: String!) {
+    crowdfundingContributions(
+      contributor: $myAddress
+      orderBy: timestamp
+      orderDirection: desc
+    ) {
+      contributor
+      amount
+      timestamp
+      crowdfunding {
+        id
+        title
+        totalRaised
+        categories
+        description
+        deadline
+        isOpen
+        current
+        target
+        starter
+      }
+    }
+  }
+`;
+
 // export const STARTER_DASHBOARD_QUERY = gql``;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,9 +138,9 @@ export const mapCrowdfunding = (d: any): Crowdfunding => {
       address: d.starter,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    contributions: d.contributions.map(mapContribution),
+    contributions: d.contributions?.map(mapContribution),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    burnings: d.burnings.map((c: any) => ({
+    burnings: d.burnings?.map((c: any) => ({
       to: c.to,
       amount: c.amount,
       timestamp: new Date(c.timestamp * 1000),

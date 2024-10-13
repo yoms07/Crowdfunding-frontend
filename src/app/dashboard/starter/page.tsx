@@ -33,16 +33,6 @@ const countBackers = (crowdfundings: Crowdfunding[]): number => {
   return backerList.size;
 };
 
-const useDashboardData = () => {
-  const { account } = useSDK();
-  const { loading, error, data } = useQuery(GET_DASHBOARD_DATA, {
-    variables: {
-      myAddress: account ? account : "0x0000", // default to zero address
-      search: "",
-    },
-  });
-};
-
 export default function Dashboard() {
   const { account } = useSDK();
   const { loading, error, data } = useQuery(GET_DASHBOARD_DATA, {

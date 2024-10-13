@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,17 +20,85 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  LayoutDashboard,
-  Heart,
-  DollarSign,
-  Settings,
-  LogOut,
-  ExternalLink,
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { mapContribution, mapCrowdfunding } from "@/lib/graphql";
+import { useContribution } from "@/hooks/use-contributions";
+import { Crowdfunding, CrowdfundingContribution } from "@/types/Crowdfunding";
+import Link from "next/link";
+
+type ContributionWithCrowdfunding = CrowdfundingContribution & {
+  crowdfunding: Crowdfunding;
+};
+
+const countImpact = (contributions: ContributionWithCrowdfunding[]) => {
+  const uniqueCrowdfundingAddress = new Set();
+  const successFullProjectAddress = new Set();
+  const donationForEachCrowdfunding: Record<string, number> = {};
+
+  contributions.forEach((contrib) => {
+    uniqueCrowdfundingAddress.add(contrib.crowdfunding.address);
+    if (contrib.crowdfunding.totalRaised >= contrib.crowdfunding.target) {
+      successFullProjectAddress.add(contrib.crowdfunding.address);
+    }
+
+    if (!(contrib.crowdfunding.address in donationForEachCrowdfunding)) {
+      donationForEachCrowdfunding[contrib.crowdfunding.address] = 0;
+    }
+    donationForEachCrowdfunding[contrib.crowdfunding.address] += contrib.amount;
+  });
+
+  const totalDonated = contributions.reduce((prev, contrib) => {
+    return prev + contrib.amount;
+  }, 0);
+
+  return {
+    crowdfundingBacked: uniqueCrowdfundingAddress.size,
+    totalDonated,
+    successFullProject: successFullProjectAddress.size,
+    donationForEachCrowdfunding,
+  };
+};
+
+const getUniqueBackedCrowdfunding = (
+  contributions: ContributionWithCrowdfunding[]
+): Crowdfunding[] => {
+  const uniqueCrowdfundingAddress = new Set();
+  const uniqueCf: Crowdfunding[] = [];
+
+  contributions.forEach((contrib) => {
+    if (!uniqueCrowdfundingAddress.has(contrib.crowdfunding.address)) {
+      uniqueCf.push(contrib.crowdfunding);
+      uniqueCrowdfundingAddress.add(contrib.crowdfunding.address);
+    }
+  });
+
+  return uniqueCf;
+};
+
+const statusText = (cf: Crowdfunding) => {
+  if (cf.totalRaised >= cf.target) {
+    return "Success";
+  }
+
+  return "Active";
+};
 
 export default function BackerDashboard() {
   const [activeTab, setActiveTab] = useState("backed-projects");
+  const { loading, error, data } = useContribution();
+
+  if (error) {
+    console.error(error);
+    return <h1>Error . . .</h1>;
+  }
+
+  const contributions: ContributionWithCrowdfunding[] = data.map((c: any) => ({
+    ...mapContribution(c),
+    crowdfunding: mapCrowdfunding(c.crowdfunding),
+  }));
+
+  const impact = countImpact(contributions);
+  const uniqueBackedCrowdfunding = getUniqueBackedCrowdfunding(contributions);
 
   const backedProjects = [
     {
@@ -94,27 +161,17 @@ export default function BackerDashboard() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold">{backedProjects.length}</p>
+              <p className="text-2xl font-bold">{impact.crowdfundingBacked}</p>
               <p className="text-sm text-muted-foreground">Projects Backed</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold">
-                $
-                {donationHistory.reduce(
-                  (sum, donation) => sum + donation.amount,
-                  0
-                )}
+                ${impact.totalDonated.toLocaleString()}
               </p>
               <p className="text-sm text-muted-foreground">Total Donated</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">
-                {
-                  backedProjects.filter(
-                    (project) => project.status === "Successful"
-                  ).length
-                }
-              </p>
+              <p className="text-2xl font-bold">{impact.successFullProject}</p>
               <p className="text-sm text-muted-foreground">
                 Successful Projects
               </p>
@@ -134,34 +191,39 @@ export default function BackerDashboard() {
         </TabsList>
 
         <TabsContent value="backed-projects" className="space-y-4">
-          {backedProjects.map((project) => (
-            <Card key={project.id}>
+          {uniqueBackedCrowdfunding.map((cf) => (
+            <Card key={cf.address}>
               <CardHeader>
-                <CardTitle>{project.name}</CardTitle>
-                <CardDescription>by {project.creator}</CardDescription>
+                <CardTitle>{cf.title}</CardTitle>
+                <CardDescription>by {cf.starter.address}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <Progress
-                    value={(project.raised / project.goal) * 100}
+                    value={(cf.totalRaised / cf.target) * 100}
                     className="h-2"
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>${project.raised.toLocaleString()} raised</span>
+                    <span>${cf.totalRaised.toLocaleString()} raised</span>
                     <span>
-                      {((project.raised / project.goal) * 100).toFixed(0)}%
+                      {((cf.totalRaised / cf.target) * 100).toFixed(0)}%
                     </span>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
-                  <p>Your pledge: ${project.pledged}</p>
-                  <p>Status: {project.status}</p>
+                  <p>
+                    Your pledge: $
+                    {impact.donationForEachCrowdfunding[cf.address]}
+                  </p>
+                  <p>Status: {statusText(cf)}</p>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">
-                  View Project <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href={`/project-detail/${cf.address}`} className="w-full">
+                  <Button variant="outline" className="w-full">
+                    View Project <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
@@ -182,11 +244,11 @@ export default function BackerDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {donationHistory.map((donation) => (
-                    <TableRow key={donation.id}>
-                      <TableCell>{donation.date}</TableCell>
-                      <TableCell>{donation.project}</TableCell>
-                      <TableCell>${donation.amount}</TableCell>
+                  {contributions.map((contrib, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{contrib.timestamp.toISOString()}</TableCell>
+                      <TableCell>{contrib.crowdfunding.title}</TableCell>
+                      <TableCell>${contrib.amount}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
