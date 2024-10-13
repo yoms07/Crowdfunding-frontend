@@ -20,7 +20,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Crowdfunding } from "@/types/Crowdfunding";
+import { countBacker, Crowdfunding } from "@/types/Crowdfunding";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
@@ -207,21 +207,20 @@ export default function ProjectDetail({
           <CardTitle>{crowdfunding.title}</CardTitle>
           <CardDescription>
             {!crowdfunding.isOpen && <p>This project has finished</p>}
-            TODO: DESCRIPTION
-            {/* {projects.find((p) => p.name === activeProject)?.description} */}
+            {crowdfunding.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <p className="text-sm text-muted-foreground">Funds Raised</p>
+              <p className="text-sm text-muted-foreground">Current Fund</p>
               <p className="text-2xl font-bold">
                 Rp. {crowdfunding.current.toLocaleString()}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Backers</p>
-              <p className="text-2xl font-bold">TODO: Backers</p>
+              <p className="text-2xl font-bold">{countBacker(crowdfunding)}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Days Left</p>
@@ -235,7 +234,7 @@ export default function ProjectDetail({
             className="h-2"
           />
           <p className="text-sm text-muted-foreground mt-2">
-            Rp. {crowdfunding.current.toLocaleString()} raised of Rp.
+            Rp. {crowdfunding.totalRaised.toLocaleString()} raised of Rp.
             {crowdfunding.target.toLocaleString()} goal
           </p>
         </CardContent>

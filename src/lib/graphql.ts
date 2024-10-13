@@ -118,6 +118,14 @@ export const GET_MY_CONTRIBUTIONS = gql`
   }
 `;
 
+export const FIND_CROWDFUNDING = gql`
+  query FindCrowdfunding($address: String!) {
+    crowdfunding(id: $address) {
+      ...CommonCrowdfundingFields
+    }
+  }
+`;
+
 // export const STARTER_DASHBOARD_QUERY = gql``;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

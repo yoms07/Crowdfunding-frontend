@@ -6,6 +6,8 @@ import { findCrowdfunding } from "@/lib/crowdfunding";
 import { useToast } from "@/hooks/use-toast";
 import { Crowdfunding } from "@/types/Crowdfunding";
 import ProjectDetail from "./detail";
+import { useCrowdfunding } from "@/hooks/use-crowdfunding";
+import { mapCrowdfunding } from "@/lib/graphql";
 
 export default function ProjectManagement({
   params,
@@ -13,39 +15,25 @@ export default function ProjectManagement({
   params: { address: string };
 }) {
   const { toast } = useToast();
-  const [crowdfunding, setCrowdfunding] = useState<Crowdfunding | null>(null);
-  const fetchCrowdfunding = async () => {
-    try {
-      const cf = await findCrowdfunding(params.address);
-      setCrowdfunding(cf);
-    } catch (err) {
-      if (err instanceof Error) {
-        toast({
-          title: "Error fetching crowdfunding data",
-          description: err.message,
-        });
-        return;
-      }
-      toast({
-        title: "Error fetching crowdfunding data",
-        description: err as string,
-      });
-    }
-  };
+  const { data, error, loading } = useCrowdfunding(params.address);
 
-  useEffect(() => {
-    fetchCrowdfunding();
-  }, []);
-
-  if (crowdfunding === null) {
+  if (loading) {
     return <h1>Loading . . .</h1>;
+  }
+
+  if (error) {
+    toast({
+      title: "Error find crowdfunding",
+      description: error.message,
+    });
+    return <h1>Error . . .</h1>;
   }
 
   return (
     <div className="flex h-screen bg-gray-100 w-full">
       {/* Sidebar */}
 
-      <ProjectDetail crowdfunding={crowdfunding} />
+      <ProjectDetail crowdfunding={mapCrowdfunding(data)} />
       {/* Main content */}
     </div>
   );
