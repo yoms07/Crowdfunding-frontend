@@ -27,7 +27,7 @@ export default function CrowdfundingCard({
       </CardHeader>
       <CardContent>
         <Progress
-          value={(crowdfunding.current / crowdfunding.target) * 100}
+          value={(crowdfunding.totalRaised / crowdfunding.target) * 100}
           className="mb-2"
         />
         <p className="text-sm text-muted-foreground mb-4">

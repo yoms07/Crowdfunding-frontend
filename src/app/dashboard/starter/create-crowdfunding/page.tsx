@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -39,6 +39,7 @@ import {
 import { createCrowdfunding } from "@/lib/factory";
 
 import { useToast } from "@/hooks/use-toast";
+import { redirect } from "next/navigation";
 
 const moneyFormatter = Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -94,6 +95,7 @@ const nextWeek = (): Date => {
 
 export default function CreateProject() {
   const { toast } = useToast();
+  const router = useRouter();
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -137,6 +139,10 @@ export default function CreateProject() {
         fundingGoal,
         deadline
       );
+      toast({
+        title: "Crowdfunding created",
+      });
+      router.push("/dashboard/starter/projects");
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({

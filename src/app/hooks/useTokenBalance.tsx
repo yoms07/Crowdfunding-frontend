@@ -8,11 +8,13 @@ type TokenBalanceContextState = {
 };
 type TokenBalanceContextAction = {
   setBalance: (balance: number) => void;
+  refetch: () => void;
 };
 
 const defaultValue: TokenBalanceContextState & TokenBalanceContextAction = {
   balance: 0,
   setBalance: () => {},
+  refetch: () => {},
 };
 
 const TokenBalanceContext = createContext<
@@ -48,6 +50,8 @@ export default function TokenBalanceProvider({
     }
   };
 
+  const refetch = fetchTokenBalance;
+
   useEffect(() => {
     fetchTokenBalance();
   }, [account]);
@@ -56,6 +60,7 @@ export default function TokenBalanceProvider({
       value={{
         balance: balance,
         setBalance: (balance: number) => setBalance(balance),
+        refetch,
       }}
     >
       {children}

@@ -36,6 +36,9 @@ export const createCrowdfunding = async (
 
     const contract = new Contract(address, KBFactoryArtifact.abi, signer);
     const tx = await contract.createCrowdfunding(
+      title,
+      description,
+      categories,
       cid.toString(),
       target,
       deadline

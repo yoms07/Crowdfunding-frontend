@@ -1,4 +1,6 @@
 "use client";
+import { useTokenBalance } from "@/app/hooks/useTokenBalance";
+import { useApolloClient } from "@apollo/client";
 import NextImage from "next/image";
 import { Crowdfunding } from "@/types/Crowdfunding";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +24,8 @@ import { HeartFilledIcon } from "@radix-ui/react-icons";
 import { useRemindMe } from "@/hooks/use-remindMe";
 import { donateToCrowdfunding } from "@/lib/factory";
 import { useToast } from "@/hooks/use-toast";
+import { useSDK } from "@metamask/sdk-react";
+import { FIND_CROWDFUNDING } from "@/lib/graphql";
 
 const moneyFormatter = Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -34,7 +38,10 @@ export default function ProjectDetail({
 }: {
   crowdfunding: Crowdfunding;
 }) {
+  const { refetch: refetchTokenBalance } = useTokenBalance();
+  const apolloClient = useApolloClient();
   const { toast } = useToast();
+  const { account } = useSDK();
   const [donationAmount, setDonationAmount] = useState(0);
   const [comment, setComment] = useState("");
   const { isRemindingMe, addRemindMe, removeRemindMe } = useRemindMe();
@@ -43,6 +50,17 @@ export default function ProjectDetail({
     e.preventDefault();
     try {
       await donateToCrowdfunding(crowdfunding.address, donationAmount);
+      toast({
+        title: `Success donate Rp. ${donationAmount.toLocaleString()} to ${
+          crowdfunding.title
+        }`,
+      });
+      refetchTokenBalance();
+      setTimeout(() => {
+        apolloClient.refetchQueries({
+          include: [FIND_CROWDFUNDING],
+        });
+      }, 2000);
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({
@@ -57,6 +75,11 @@ export default function ProjectDetail({
       });
     }
   };
+
+  const canDonate =
+    crowdfunding.isOpen &&
+    crowdfunding.totalRaised < crowdfunding.target && // whether crowdfunding is on sale
+    account; // wheter is login
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-2">
@@ -140,11 +163,11 @@ export default function ProjectDetail({
             <div className="space-y-4">
               <div>
                 <Progress
-                  value={(crowdfunding.current / crowdfunding.target) * 100}
+                  value={(crowdfunding.totalRaised / crowdfunding.target) * 100}
                   className="h-2"
                 />
                 <p className="text-2xl font-bold mt-2">
-                  Rp. {crowdfunding.current.toLocaleString()}
+                  Rp. {crowdfunding.totalRaised.toLocaleString()}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   raised of Rp. {crowdfunding.target.toLocaleString()} goal
@@ -199,6 +222,7 @@ export default function ProjectDetail({
                 <div className="space-y-2">
                   <Label htmlFor="donation-amount">Donation Amount (IDR)</Label>
                   <Input
+                    disabled={!canDonate}
                     id="currency"
                     type="text"
                     placeholder="Rp. "
@@ -218,13 +242,14 @@ export default function ProjectDetail({
                 <div className="space-y-2">
                   <Label htmlFor="comment">Leave a comment (optional)</Label>
                   <Textarea
+                    disabled={!canDonate}
                     id="comment"
                     placeholder="Say something nice..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                   />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={!canDonate}>
                   Donate
                 </Button>
               </div>

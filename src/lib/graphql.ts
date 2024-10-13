@@ -19,6 +19,7 @@ export const COMMON_CROWDFUNDING_FIELDS_FRAGMENT = gql`
     isOpen
     current
     target
+    starter
     contributions {
       contributor
       amount
@@ -42,6 +43,14 @@ export const GET_CROWDFUNDINGS = gql`
         ]
       }
     ) {
+      ...CommonCrowdfundingFields
+    }
+  }
+`;
+
+export const GET_FEATURED_CROWDFUNDINGS = gql`
+  query GetFeaturedCrowdfunding {
+    crowdfundings(first: 3, orderBy: createdAt, orderDirection: desc) {
       ...CommonCrowdfundingFields
     }
   }

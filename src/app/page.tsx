@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
+import FeaturedProjects from "@/components/home/featured-project";
 
 export default async function CrowdfundingPlatform() {
   return (
@@ -149,72 +150,6 @@ function HeroSection() {
               Explore Projects
             </Button>
           </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeaturedProjects() {
-  const projects = [
-    {
-      title: "Eco-Friendly Water Bottle",
-      category: "Environment",
-      goal: 10000,
-      raised: 7500,
-      backers: 150,
-      daysLeft: 12,
-    },
-    {
-      title: "Innovative Learning App",
-      category: "Education",
-      goal: 25000,
-      raised: 18000,
-      backers: 320,
-      daysLeft: 8,
-    },
-    {
-      title: "Community Garden Initiative",
-      category: "Community",
-      goal: 5000,
-      raised: 4200,
-      backers: 85,
-      daysLeft: 5,
-    },
-  ];
-
-  return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">
-          Featured Projects
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle>{project.title}</CardTitle>
-                <CardDescription>{project.category}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Progress
-                  value={(project.raised / project.goal) * 100}
-                  className="mb-2"
-                />
-                <p className="text-sm text-muted-foreground mb-4">
-                  ${project.raised.toLocaleString()} raised of $
-                  {project.goal.toLocaleString()} goal
-                </p>
-                <div className="flex justify-between text-sm">
-                  <span>{project.backers} backers</span>
-                  <span>{project.daysLeft} days left</span>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Back this project</Button>
-              </CardFooter>
-            </Card>
-          ))}
         </div>
       </div>
     </section>
