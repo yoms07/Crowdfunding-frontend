@@ -31,10 +31,7 @@ export default function ProjectManagement({
 
   return (
     <div className="flex h-screen bg-gray-100 w-full">
-      {/* Sidebar */}
-
       <ProjectDetail crowdfunding={mapCrowdfunding(data)} />
-      {/* Main content */}
     </div>
   );
 }

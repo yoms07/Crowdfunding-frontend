@@ -100,57 +100,6 @@ export default function BackerDashboard() {
   const impact = countImpact(contributions);
   const uniqueBackedCrowdfunding = getUniqueBackedCrowdfunding(contributions);
 
-  const backedProjects = [
-    {
-      id: 1,
-      name: "Eco-Friendly Water Bottle",
-      creator: "Green Solutions Inc.",
-      pledged: 50,
-      goal: 10000,
-      raised: 7500,
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Innovative Learning App",
-      creator: "EduTech Startup",
-      pledged: 100,
-      goal: 25000,
-      raised: 18000,
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Community Garden Initiative",
-      creator: "Local Green Thumbs",
-      pledged: 25,
-      goal: 5000,
-      raised: 5000,
-      status: "Successful",
-    },
-  ];
-
-  const donationHistory = [
-    {
-      id: 1,
-      project: "Eco-Friendly Water Bottle",
-      amount: 50,
-      date: "2023-06-15",
-    },
-    {
-      id: 2,
-      project: "Innovative Learning App",
-      amount: 100,
-      date: "2023-06-10",
-    },
-    {
-      id: 3,
-      project: "Community Garden Initiative",
-      amount: 25,
-      date: "2023-05-28",
-    },
-  ];
-
   return (
     <main className="flex-1 overflow-y-auto p-8">
       <h1 className="text-3xl font-bold mb-8">Backer Dashboard</h1>
@@ -166,7 +115,7 @@ export default function BackerDashboard() {
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold">
-                ${impact.totalDonated.toLocaleString()}
+                Rp. {impact.totalDonated.toLocaleString()}
               </p>
               <p className="text-sm text-muted-foreground">Total Donated</p>
             </div>
@@ -204,7 +153,7 @@ export default function BackerDashboard() {
                     className="h-2"
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>${cf.totalRaised.toLocaleString()} raised</span>
+                    <span>Rp. {cf.totalRaised.toLocaleString()} raised</span>
                     <span>
                       {((cf.totalRaised / cf.target) * 100).toFixed(0)}%
                     </span>
@@ -212,7 +161,7 @@ export default function BackerDashboard() {
                 </div>
                 <div className="mt-4 space-y-2">
                   <p>
-                    Your pledge: $
+                    Your pledge: Rp.
                     {impact.donationForEachCrowdfunding[cf.address]}
                   </p>
                   <p>Status: {statusText(cf)}</p>
@@ -248,7 +197,7 @@ export default function BackerDashboard() {
                     <TableRow key={idx}>
                       <TableCell>{contrib.timestamp.toISOString()}</TableCell>
                       <TableCell>{contrib.crowdfunding.title}</TableCell>
-                      <TableCell>${contrib.amount}</TableCell>
+                      <TableCell>Rp. {contrib.amount}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

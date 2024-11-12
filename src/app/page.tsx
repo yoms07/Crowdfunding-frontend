@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import FeaturedProjects from "@/components/home/featured-project";
 
@@ -137,11 +129,11 @@ function HeroSection() {
     <section className="bg-primary text-primary-foreground py-20">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Fund Your Passion, Change the World
+          Empower Change, One Donation at a Time!
         </h1>
         <p className="text-xl mb-8">
-          Join our community of creators and backers to bring innovative ideas
-          to life.
+          Join us in making a difference and supporting the causes that matter
+          most to you.
         </p>
         <div className="flex justify-center space-x-4">
           {/* <Button size="lg">Start a Project</Button> */}
@@ -158,14 +150,19 @@ function HeroSection() {
 
 function Categories() {
   const categories = [
-    "Technology",
-    "Art",
-    "Film",
-    "Music",
-    "Games",
-    "Publishing",
-    "Food",
-    "Fashion",
+    "Pendidikan",
+    "Kesehatan",
+    "Kemanusiaan",
+    "Infrastruktur",
+    "Sosial",
+    "Anak-anak",
+    "Keagamaan",
+    "Bencana Alam",
+    "Ekonomi",
+    "Pemberdayaan Masyarakat",
+    "Lansia",
+    "Lingkungan",
+    "Disabilitas",
   ];
 
   return (
@@ -189,18 +186,21 @@ function Categories() {
 function SuccessStories() {
   const stories = [
     {
-      title: "Clean Ocean Project",
-      description: "Raised $1M to clean plastic from the ocean",
+      title: "From Dream to Reality: Sarah's Journey!",
+      description:
+        "With your generous donations, Sarah was able to fund her education and pursue her dream of becoming a doctor, inspiring her community along the way.",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
-      title: "Innovative Smartwatch",
-      description: "Reached 500% of funding goal in 2 weeks",
+      title: "Building a Brighter Future for Our Youth!",
+      description:
+        "Thanks to your support, the local youth center now provides essential resources and mentorship programs, transforming lives and fostering hope for a better tomorrow.",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
-      title: "Indie Film Production",
-      description: "Successfully funded and premiered at Sundance",
+      title: "A Second Chance: Mark's New Beginning!",
+      description:
+        "Through the kindness of our donors, Mark received the medical treatment he desperately needed, allowing him to reclaim his life and give back to those in need.",
       image: "/placeholder.svg?height=100&width=100",
     },
   ];

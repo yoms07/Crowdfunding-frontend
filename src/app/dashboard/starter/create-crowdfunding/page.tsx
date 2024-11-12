@@ -27,7 +27,6 @@ import {
   // Plus,
   // Trash2,
   Upload,
-  ArrowLeft,
   CalendarIcon,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -39,7 +38,7 @@ import {
 import { createCrowdfunding } from "@/lib/factory";
 
 import { useToast } from "@/hooks/use-toast";
-import { redirect } from "next/navigation";
+import { CROWDFUNDING_CATEGORIES } from "@/types/categories";
 
 const moneyFormatter = Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -206,11 +205,11 @@ export default function CreateProject() {
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="technology">Technology</SelectItem>
-                        <SelectItem value="art">Art</SelectItem>
-                        <SelectItem value="film">Film</SelectItem>
-                        <SelectItem value="games">Games</SelectItem>
-                        <SelectItem value="music">Music</SelectItem>
+                        {CROWDFUNDING_CATEGORIES.map((cat, i) => (
+                          <SelectItem key={i} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

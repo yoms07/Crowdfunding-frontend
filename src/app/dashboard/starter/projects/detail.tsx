@@ -55,7 +55,7 @@ export default function CrowdfundingCard({
       <CardContent>
         <div className="flex justify-between mb-2">
           <span>
-            ${crowdfunding.totalRaised.toLocaleString()} raised of $
+            Rp. {crowdfunding.totalRaised.toLocaleString()} raised of Rp.
             {crowdfunding.target.toLocaleString()}
           </span>
           {/* <Badge

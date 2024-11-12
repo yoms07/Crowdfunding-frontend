@@ -13,6 +13,7 @@ import { Progress } from "../ui/progress";
 import { GET_FEATURED_CROWDFUNDINGS } from "@/lib/graphql";
 import { countBacker, Crowdfunding } from "@/types/Crowdfunding";
 import { daysLeft } from "@/app/utils/date";
+import Link from "next/link";
 
 export default function FeaturedProjects() {
   const { loading, error, data } = useQuery(GET_FEATURED_CROWDFUNDINGS);
@@ -26,6 +27,8 @@ export default function FeaturedProjects() {
 
   const crowdfundings: Crowdfunding[] =
     data && data.crowdfundings ? data.crowdfundings : [];
+
+  console.log(crowdfundings);
 
   return (
     <section className="py-16">
@@ -55,7 +58,9 @@ export default function FeaturedProjects() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full">Back this project</Button>
+                <Link href={`/project-detail/${cf.id}`}>
+                  <Button className="w-full">Back this project</Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}

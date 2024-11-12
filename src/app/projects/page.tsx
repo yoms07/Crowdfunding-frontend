@@ -12,6 +12,7 @@ import { GET_CROWDFUNDINGS, mapCrowdfunding } from "@/lib/graphql";
 import { Crowdfunding } from "@/types/Crowdfunding";
 import CrowdfundingCard from "./card";
 import { useMemo, useState } from "react";
+import { CROWDFUNDING_CATEGORIES } from "@/types/categories";
 
 const useSearch = () => {
   const [search, setSearch] = useState("");
@@ -78,12 +79,11 @@ export default function ProjectExplorer() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            <SelectItem value="Technology">Technology</SelectItem>
-            <SelectItem value="Arts">Arts</SelectItem>
-            <SelectItem value="Environment">Environment</SelectItem>
-            <SelectItem value="Fashion">Fashion</SelectItem>
-            <SelectItem value="Games">Games</SelectItem>
-            <SelectItem value="Food">Food</SelectItem>
+            {CROWDFUNDING_CATEGORIES.map((cat, i) => (
+              <SelectItem value={cat} key={i}>
+                {cat}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {/* <Select>

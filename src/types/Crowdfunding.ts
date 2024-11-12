@@ -1,3 +1,9 @@
+export type UserWallet = {
+  id: string;
+  address: string;
+  balance: number;
+};
+
 export type CrowdfundingContribution = {
   contributor: string;
   amount: number;
@@ -17,6 +23,7 @@ export type CrowdfundingMetadata = {
 };
 
 export type Crowdfunding = CrowdfundingMetadata & {
+  id: string;
   address: string;
   current: number;
   target: number;

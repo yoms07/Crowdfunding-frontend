@@ -1,0 +1,15 @@
+export const CROWDFUNDING_CATEGORIES = [
+  "Pendidikan",
+  "Kesehatan",
+  "Kemanusiaan",
+  "Infrastruktur",
+  "Sosial",
+  "Anak-anak",
+  "Keagamaan",
+  "Bencana Alam",
+  "Ekonomi",
+  "Pemberdayaan Masyarakat",
+  "Lansia",
+  "Lingkungan",
+  "Disabilitas",
+];

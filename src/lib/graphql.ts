@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { Crowdfunding, CrowdfundingContribution } from "@/types/Crowdfunding";
+import {
+  Crowdfunding,
+  CrowdfundingContribution,
+  UserWallet,
+} from "@/types/Crowdfunding";
 
 export const GET_CROWDFUNDINGS_INPUT = gql`
   type GetCrowdfundingsInput {
@@ -135,12 +139,23 @@ export const FIND_CROWDFUNDING = gql`
   }
 `;
 
+export const GET_USER_WALLETS = gql`
+  query GetUserWallets {
+    userWallets {
+      id
+      address
+      balance
+    }
+  }
+`;
+
 // export const STARTER_DASHBOARD_QUERY = gql``;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mapCrowdfunding = (d: any): Crowdfunding => {
   console.log(d);
   return {
+    id: d.id,
     address: d.id,
     title: d.title,
     totalRaised: d.totalRaised,
@@ -164,11 +179,21 @@ export const mapCrowdfunding = (d: any): Crowdfunding => {
     })),
   };
 };
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mapContribution = (c: any): CrowdfundingContribution => {
   return {
     contributor: c.contributor,
     amount: c.amount,
     timestamp: new Date(c.timestamp * 1000),
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const mapUserWallets = (d: any): UserWallet => {
+  console.log(d);
+  return {
+    id: d.id,
+    address: d.address,
+    balance: d.balance,
   };
 };

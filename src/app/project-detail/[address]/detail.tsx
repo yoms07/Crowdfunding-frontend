@@ -26,6 +26,14 @@ import { donateToCrowdfunding } from "@/lib/factory";
 import { useToast } from "@/hooks/use-toast";
 import { useSDK } from "@metamask/sdk-react";
 import { FIND_CROWDFUNDING } from "@/lib/graphql";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const moneyFormatter = Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -38,7 +46,8 @@ export default function ProjectDetail({
 }: {
   crowdfunding: Crowdfunding;
 }) {
-  const { refetch: refetchTokenBalance } = useTokenBalance();
+  console.log(crowdfunding);
+  const { refetch: refetchTokenBalance, balance } = useTokenBalance();
   const apolloClient = useApolloClient();
   const { toast } = useToast();
   const { account } = useSDK();
@@ -49,6 +58,12 @@ export default function ProjectDetail({
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (balance && donationAmount > balance) {
+        toast({
+          title: "Saldo tidak cukup",
+        });
+        return;
+      }
       await donateToCrowdfunding(crowdfunding.address, donationAmount);
       toast({
         title: `Success donate Rp. ${donationAmount.toLocaleString()} to ${
@@ -120,17 +135,50 @@ export default function ProjectDetail({
               <CardHeader>
                 <CardTitle>Project Updates</CardTitle>
               </CardHeader>
-              {/* <CardContent>
-                {project.updates.map((update, index) => (
-                  <div key={index} className="mb-4">
-                    <h3 className="text-lg font-semibold">{update.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {update.date}
-                    </p>
-                    <p>{update.content}</p>
-                  </div>
-                ))}
-              </CardContent> */}
+              <CardContent>
+                <h1 className="underline">Contributions</h1>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Backer</TableHead>
+                      <TableHead>Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {crowdfunding.contributions.map((contrib, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{contrib.timestamp.toISOString()}</TableCell>
+                        <TableCell>{contrib.contributor}</TableCell>
+                        <TableCell>
+                          Rp. {contrib.amount.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <h1 className="underline">Withdraw</h1>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>To</TableHead>
+                      <TableHead>Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {crowdfunding.burnings.map((burning, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{burning.timestamp.toISOString()}</TableCell>
+                        <TableCell>{burning.to}</TableCell>
+                        <TableCell>
+                          Rp. {burning.amount.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="comments">

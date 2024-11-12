@@ -16,7 +16,7 @@ const UserInfo = () => {
       </div>
       <div className="flex items-center">
         <Bitcoin />
-        <p>{balance?.toString()}</p>
+        <p>{balance?.toLocaleString()}</p>
       </div>
     </div>
   );

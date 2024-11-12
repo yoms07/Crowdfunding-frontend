@@ -37,13 +37,13 @@ export default function FinancialReporting({
             <div>
               <p className="text-sm text-muted-foreground">Total Raised</p>
               <p className="text-2xl font-bold">
-                ${totalRaised(crowdfundings).toLocaleString()}
+                Rp. {totalRaised(crowdfundings).toLocaleString()}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Average Pledge</p>
               <p className="text-2xl font-bold">
-                ${" "}
+                Rp.{" "}
                 {contributionCount(crowdfundings) > 0
                   ? (
                       totalRaised(crowdfundings) /
@@ -73,7 +73,7 @@ export default function FinancialReporting({
                 <TableRow>
                   <TableCell>{rt.timestamp.toISOString()}</TableCell>
                   <TableCell>{rt.contributor}</TableCell>
-                  <TableCell>${rt.amount.toLocaleString()}</TableCell>
+                  <TableCell>Rp. {rt.amount.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

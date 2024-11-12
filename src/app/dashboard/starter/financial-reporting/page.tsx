@@ -12,15 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  LayoutDashboard,
-  DollarSign,
-  Users,
-  BarChart2,
-  Settings,
-  LogOut,
-  Download,
-} from "lucide-react";
+import { Download } from "lucide-react";
 import {
   BarChart,
   Bar,

@@ -31,7 +31,7 @@ export default function CrowdfundingCard({
           className="mb-2"
         />
         <p className="text-sm text-muted-foreground mb-4">
-          ${crowdfunding.totalRaised.toLocaleString()} raised of $
+          Rp. {crowdfunding.totalRaised.toLocaleString()} raised of Rp.
           {crowdfunding.target.toLocaleString()} goal
         </p>
         <div className="flex justify-between text-sm">

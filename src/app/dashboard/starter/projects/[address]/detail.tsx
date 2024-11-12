@@ -28,6 +28,9 @@ import { cn } from "@/lib/utils";
 import { withdrawFromCrowdfunding } from "@/lib/factory";
 import { useToast } from "@/hooks/use-toast";
 import { Alert } from "@/components/ui/alert";
+import { useApolloClient } from "@apollo/client";
+import { FIND_CROWDFUNDING } from "@/lib/graphql";
+import { useTokenBalance } from "@/app/hooks/useTokenBalance";
 
 export function DatePicker({
   date,
@@ -74,10 +77,27 @@ export function DatePicker({
 const WithdrawTab = ({ crowdfunding }: { crowdfunding: Crowdfunding }) => {
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const { toast } = useToast();
+  const { refetch: refetchTokenBalance } = useTokenBalance();
+  const apolloClient = useApolloClient();
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (crowdfunding.isOpen && crowdfunding.totalRaised < crowdfunding.target) {
+      toast({
+        title: "Crowdfunding belum bisa ditarik dananya",
+      });
+      return;
+    }
     try {
       await withdrawFromCrowdfunding(crowdfunding.address, withdrawAmount);
+      toast({
+        title: `Success withdraw Rp. ${withdrawAmount.toLocaleString()} from this project`,
+      });
+      refetchTokenBalance();
+      setTimeout(() => {
+        apolloClient.refetchQueries({
+          include: [FIND_CROWDFUNDING],
+        });
+      }, 2000);
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({

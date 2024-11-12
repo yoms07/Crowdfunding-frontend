@@ -24,12 +24,26 @@ import {
 import { LayoutDashboard, DollarSign, Search, Plus } from "lucide-react";
 import { topUp } from "@/lib/kbToken";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@apollo/client";
+import { GET_USER_WALLETS, mapUserWallets } from "@/lib/graphql";
+import { UserWallet } from "@/types/Crowdfunding";
 
 export default function AdminDashboard() {
+  const { data, loading, error } = useQuery(GET_USER_WALLETS);
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [topUpAmount, setTopUpAmount] = useState(0);
+
+  if (error) {
+    return <h1>Error . . .</h1>;
+  }
+  let wallets: UserWallet[] = [];
+
+  if (!loading && !error) {
+    wallets = data.userWallets.map(mapUserWallets);
+  }
+  console.log(wallets);
 
   // Mock user data
   const users = [
@@ -86,41 +100,23 @@ export default function AdminDashboard() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>User Wallet Management</CardTitle>
-            <CardDescription>
-              Search for users and top up their wallet balance
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Search className="w-5 h-5 text-gray-500" />
-                <Input
-                  type="text"
-                  placeholder="Search users by name or email"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1"
-                />
-              </div>
+              <div className="flex items-center space-x-2"></div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
+                    <TableHead>Address</TableHead>
                     <TableHead>Current Balance</TableHead>
-                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>${user.balance.toFixed(2)}</TableCell>
+                  {wallets.map((wallet) => (
+                    <TableRow key={wallet.id}>
+                      <TableCell>{wallet.address}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleUserSelect(user)}>
-                          Select
-                        </Button>
+                        Rp. {wallet.balance.toLocaleString()}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -148,7 +144,7 @@ export default function AdminDashboard() {
               <div>
                 <Label htmlFor="top-up-amount">Top Up Amount</Label>
                 <div className="flex items-center space-x-2">
-                  <DollarSign className="w-5 h-5 text-gray-500" />
+                  Rp.
                   <Input
                     id="top-up-amount"
                     type="number"
